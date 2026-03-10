@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bhojpuri GPT</title>
+    <meta name="description"
+        content="An AI assistant fine-tuned on Bhojpuri songs and lyrics to generate new text." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="/static/style.css" />
+</head>
+
+<body>
+    <!-- ─── Background blobs ─── -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+
+    <div class="page-wrapper">
+        <!-- ─── Left Sidebar ─── -->
+        <aside class="info-sidebar left-sidebar">
+            <section class="info-section">
+                <h3>Model Information</h3>
+                <div class="info-card">
+                    <p><strong>Name:</strong> Bhojpuri GPT</p>
+                    <p><strong>Architecture:</strong> GPT-2 Large + LoRA</p>
+                    <p><strong>Parameters:</strong> 774M (Base) + 16M (Adapter)</p>
+                    <p><strong>Training Type:</strong> Causal Language Modeling / Finetuning</p>
+                    <p><strong>Dataset:</strong> conditioned_train.jsonl (Bhojpuri lyrics dataset)</p>
+                    <p><strong>Objective:</strong> Next-token prediction</p>
+                    <p><strong>Capabilities:</strong> Generating Bhojpuri lyrics, poems, passages, and regional dialogues.</p>
+                    <p><strong>Limitations:</strong> May hallucinate facts, limited context window (1024 tokens).</p>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h3>Training Details</h3>
+                <div class="info-card">
+                    <p><strong>Dataset Format:</strong> Plain text / formatted lyrics</p>
+                    <p><strong>Method:</strong> Parameter-Efficient Fine-Tuning (PEFT/LoRA)</p>
+                    <p><strong>Behavior:</strong> Tuned for generating continuous Bhojpuri text matching local flavor and rhythm.</p>
+                    <p><strong>Inference:</strong> Optimized for generation with Hugging Face transformers/peft.</p>
+                </div>
+            </section>
+        </aside>
+
+        <div class="app-container">
+            <!-- ─── Header ─── -->
+            <header class="app-header">
+                <div class="header-left">
+                    <div class="logo-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1>Bhojpuri GPT</h1>
+                        <span class="header-subtitle">An AI generator fine-tuned on local Bhojpuri songs and lyrics.</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div id="status-indicator" class="status-badge status-loading">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Connecting…</span>
+                    </div>
+                    <button id="settings-toggle" class="icon-btn" title="Generation Settings"
+                        aria-label="Toggle settings panel">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3" />
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.32 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                        </svg>
+                    </button>
+                    <button id="clear-btn" class="icon-btn" title="Clear Chat" aria-label="Clear chat history">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6l-2 14H7L5 6" />
+                            <path d="M10 11v6" />
+                            <path d="M14 11v6" />
+                            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- ─── Settings Panel ─── -->
+            <div id="settings-panel" class="settings-panel hidden">
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <label for="max-length">Max Length</label>
+                        <div class="slider-row">
+                            <input type="range" id="max-length" min="20" max="1024" value="60" />
+                            <span id="max-length-val" class="slider-val">60</span>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <label for="temperature">Temperature</label>
+                        <div class="slider-row">
+                            <input type="range" id="temperature" min="10" max="200" value="85" />
+                            <span id="temperature-val" class="slider-val">0.85</span>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <label for="top-p">Top-P</label>
+                        <div class="slider-row">
+                            <input type="range" id="top-p" min="10" max="100" value="95" />
+                            <span id="top-p-val" class="slider-val">0.95</span>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <label for="top-k">Top-K</label>
+                        <div class="slider-row">
+                            <input type="range" id="top-k" min="1" max="200" value="50" />
+                            <span id="top-k-val" class="slider-val">50</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Chat Area ─── -->
+            <main id="chat-area" class="chat-area">
+                <div class="welcome-card">
+                    <div class="welcome-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="url(#grad)"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <defs>
+                                <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#ea580c" />
+                                    <stop offset="100%" style="stop-color:#f59e0b" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
+                        </svg>
+                    </div>
+                    <h2>Welcome to Bhojpuri GPT</h2>
+                    <p>An AI assistant trained on Bhojpuri language aesthetics and songs. Type
+                        a prompt below to start generating text.</p>
+                    <div class="example-prompts">
+                        <button class="example-btn"
+                            data-prompt="Lollipop Lagelu">🎵 Lollipop Lagelu</button>
+                        <button class="example-btn"
+                            data-prompt="Pyaar ke ekaise kahania">✍️ Pyar ke kahania</button>
+                        <button class="example-btn"
+                            data-prompt="Goriya chand ke anjoriya">🚀 Goriya chand ke</button>
+                    </div>
+                </div>
+            </main>
+
+            <!-- ─── Input Area ─── -->
+            <footer class="input-area">
+                <div class="input-wrapper">
+                    <textarea id="prompt-input" placeholder="Aapan prompt yaha likhi (Type your prompt)…" rows="1"
+                        maxlength="2048"></textarea>
+                    <button id="send-btn" class="send-btn" title="Send" aria-label="Send prompt" disabled>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13" />
+                            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                        </svg>
+                    </button>
+                </div>
+                <p class="input-hint">Press <kbd>Enter</kbd> to send · <kbd>Shift + Enter</kbd> for new line</p>
+            </footer>
+        </div> <!-- app-container close -->
+
+        <!-- ─── Right Sidebar ─── -->
+        <aside class="info-sidebar right-sidebar">
+            <section class="info-section">
+                <h3>What Bhojpuri GPT Does</h3>
+                <div class="info-card">
+                    <p>Bhojpuri GPT is an AI text generation assistant that was fine-tuned on a vast dataset of Bhojpuri song lyrics. It can complete song lines or generate new text with a strong regional flavor.</p>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h3>About the Creator</h3>
+                <div class="info-card">
+                    <p><strong>Creator:</strong> Priyanshu Kumar</p>
+                    <p><strong>Links:</strong>
+                        <a href="https://github.com/Priya123nshu" target="_blank" rel="noopener noreferrer">GitHub</a> |
+                        <a href="https://www.linkedin.com/in/priyanshu-kumar-980b50179/" target="_blank"
+                            rel="noopener noreferrer">LinkedIn</a> |
+                        <a href="https://portfolio-vert-two-73.vercel.app/" target="_blank"
+                            rel="noopener noreferrer">Portfolio</a> |
+                        <a href="mailto:priyanshu.altruist@gmail.com">Email</a>
+                    </p>
+                </div>
+            </section>
+        </aside>
+    </div> <!-- page-wrapper close -->
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>
